@@ -79,16 +79,6 @@ static int set_string_length(string *str, size_t len)
         return 0;
 }
 
-static int cmp_with_null(const_string first, const_string second)
-{
-        if (!first && !second)
-                return 0;
-        else if (!first)
-                return -1;
-        else
-                return 1;
-}
-
 /* API -----------------------------------------------------------------------*/
 
 string string_empty()
