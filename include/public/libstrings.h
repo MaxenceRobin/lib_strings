@@ -18,6 +18,8 @@ typedef const char *const_string;
 
 /* API -----------------------------------------------------------------------*/
 
+/* Creation functions ----------------*/
+
 /**
  * @brief Creates an empty string.
  * 
@@ -70,12 +72,22 @@ string string_dup_v(const char *src, size_t len);
  */
 string string_sub_v(const char *src, unsigned int start, size_t len);
 
+/* Modification functions ------------*/
+
 /**
  * @brief Destroys a string.
  * 
  * @param str : String to destroy
  */
 void string_destroy(const_string str);
+
+/**
+ * @brief Clears a string, making it empty.
+ * 
+ * @param str : String to clear.
+ * @return int : 0 on success, a negative errno on failure.
+ */
+int string_clear(string str);
 
 /**
  * @brief Copies the content of a string into another one.
@@ -116,7 +128,7 @@ int string_copy_v(string *dest, const char *src, size_t len);
  * @param src : String to append.
  * @return int : 0 on success, in case of failure a negative errno is returned.
  */
-int string_cat(string *dest, const_string src);
+int string_append(string *dest, const_string src);
 
 /**
  * @brief Appends the content of a string literal at the end of a string.
@@ -129,7 +141,7 @@ int string_cat(string *dest, const_string src);
  * It cas be better for performances to use string_cat_v() coupled with sizeof
  * instead.
  */
-int string_cat_c(string *dest, const char *src);
+int string_append_c(string *dest, const char *src);
 
 /**
  * @brief Appends the content of a char array at the end of a string.
@@ -139,8 +151,66 @@ int string_cat_c(string *dest, const char *src);
  * @param len : Length of the char array to append.
  * @return int : 0 on success, in case of failure a negative errno is returned.
  */
-int string_cat_v(string *dest, const char *src, size_t len);
+int string_append_v(string *dest, const char *src, size_t len);
 
+/**
+ * @brief Appends the content of a string at the end of another one.
+ * 
+ * @param dest : Address of the string to append the content to.
+ * @param src : String to append.
+ * @return int : 0 on success, in case of failure a negative errno is returned.
+ */
+int string_prepend(string *dest, const_string src);
+
+/**
+ * @brief Appends the content of a string literal at the end of a string.
+ * 
+ * @param dest : Address of the string to append the content to.
+ * @param src : String literal to append.
+ * @return int : 0 on success, in case of failure a negative errno is returned.
+ * 
+ * @note This version uses strlen() to determine the string literal length.
+ * It cas be better for performances to use string_cat_v() coupled with sizeof
+ * instead.
+ */
+int string_prepend_c(string *dest, const char *src);
+
+/**
+ * @brief Appends the content of a char array at the end of a string.
+ * 
+ * @param dest : Address of the string to append the content to.
+ * @param src : Char array to append.
+ * @param len : Length of the char array to append.
+ * @return int : 0 on success, in case of failure a negative errno is returned.
+ */
+int string_prepend_v(string *dest, const char *src, size_t len);
+
+/**
+ * @brief Cuts the substring to a subpart of what it contains.
+ * 
+ * @param str : String to cut.
+ * @param start : Position to start to cut from, first index is 0.
+ * @param len : Number of characters to cut.
+ * @return int : 0 on success, a negative errno in case of failure.
+ */
+int string_cut(string *str, unsigned int start, size_t len);
+
+/**
+ * @brief Writes the formatted input into the string.
+ * 
+ * @param str : String in which to write the formatted input
+ * @param format : Format to apply to the given arguments.
+ * @param ... : Arguments to format.
+ * @return int : Number of written bytes into the string on success, a negative
+ * errno on failure.
+ * 
+ * @note If the output was truncated, the return valud is the number of
+ * chraracters which would have been written to the string if enough space had
+ * been available.
+ */
+int string_printf(string str, const char *format, ...);
+
+/* Utility functions -----------------*/
 /**
  * @brief Returns the length of the string.
  * 
