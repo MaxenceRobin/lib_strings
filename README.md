@@ -20,50 +20,107 @@ static void print_error(const char *msg, int error_code)
         fprintf(stderr, "%s : %s\n", msg, strerror(error_code));
 }
 
+static void print_string(const_string str)
+{
+        printf("content : '%s'\nlength : %ld\ncapacity : %ld\n\n",
+                        str, string_len(str), string_capacity(str));
+}
+
 int main()
 {
         int status = EXIT_FAILURE;
         int res;
 
-        string msg = string_dup_c("Hello world!");
-        printf("%s\n", msg);
+        string str = string_empty();
+        print_string(str);
 
-        string end = string_sub_v(msg, 5, 7);
-        string bye = string_empty();
-        res = string_copy_c(&bye, "Bye");
-        if (res < 0) {
-                print_error("Could not copy the string", -res);
-                goto out;
-        } else {
-                printf("The string was successfully copied\n");
-        }
+        string_copy_c(&str, "world");
+        print_string(str);
 
-        string_cat(&bye, end);
-        printf("%s\n", bye);
+        string_append_c(&str, "!");
+        print_string(str);
 
-        printf("Before fit : %lu / %lu\n",
-                        string_len(bye), string_capacity(bye));
+        string_prepend_c(&str, "Hello ");
+        print_string(str);
 
-        string_fit(&bye);
+        string copy = string_dup(str);
+        print_string(copy);
 
-        printf("After fit : %lu / %lu\n",
-                        string_len(bye), string_capacity(bye));
+        string_cut(&copy, 1, string_len(copy) - 2);
+        print_string(copy);
+
+        string sub = string_sub_v(copy, 1, string_len(copy) - 2);
+        print_string(sub);
+
+        string_destroy(copy);
+        string_destroy(sub);
+
+        string_clear(str);
+        print_string(str);
+
+        string_fit(&str);
+        print_string(str);
+
+        string_reserve(&str, 32);
+        print_string(str);
+
+        res = string_printf(str, "Hello %u world%c", 2, '!');
+        printf("res = %d\n", res);
+        print_string(str);
+
+
+        string_destroy(str);
 
         status = EXIT_SUCCESS;
 out:
-        string_destroy(msg);
-        string_destroy(end);
-        string_destroy(bye);
-
         return status;
 }
 ```
 
 Expected output :
 ```
-Hello world!
-The string was successfully copied
-Bye world!
-Before fit : 10 / 21
-After fit : 10 / 11
+content : ''
+length : 0
+capacity : 1
+
+content : 'world'
+length : 5
+capacity : 11
+
+content : 'world!'
+length : 6
+capacity : 11
+
+content : 'Hello world!'
+length : 12
+capacity : 25
+
+content : 'Hello world!'
+length : 12
+capacity : 13
+
+content : 'ello world'
+length : 10
+capacity : 13
+
+content : 'llo worl'
+length : 8
+capacity : 9
+
+content : ''
+length : 0
+capacity : 25
+
+content : ''
+length : 0
+capacity : 1
+
+content : ''
+length : 0
+capacity : 32
+
+res = 14
+content : 'Hello 2 world!'
+length : 14
+capacity : 32
 ```
