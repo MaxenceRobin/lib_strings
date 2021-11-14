@@ -20,10 +20,10 @@ static void print_error(const char *msg, int error_code)
         fprintf(stderr, "%s : %s\n", msg, strerror(error_code));
 }
 
-static void print_string(const_string str)
+static void print_string(const struct string *str)
 {
         printf("content : '%s'\nlength : %ld\ncapacity : %ld\n\n",
-                        str, string_len(str), string_capacity(str));
+                        str->value, string_len(str), string_capacity(str));
 }
 
 int main()
@@ -31,25 +31,25 @@ int main()
         int status = EXIT_FAILURE;
         int res;
 
-        string str = string_empty();
+        struct string *str = string_empty();
         print_string(str);
 
-        string_copy_c(&str, "world");
+        string_copy_c(str, "world");
         print_string(str);
 
-        string_append_c(&str, "!");
+        string_append_c(str, "!");
         print_string(str);
 
-        string_prepend_c(&str, "Hello ");
+        string_prepend_c(str, "Hello ");
         print_string(str);
 
-        string copy = string_dup(str);
+        struct string *copy = string_dup(str);
         print_string(copy);
 
-        string_cut(&copy, 1, string_len(copy) - 2);
+        string_cut(copy, 1, string_len(copy) - 2);
         print_string(copy);
 
-        string sub = string_sub_v(copy, 1, string_len(copy) - 2);
+        struct string *sub = string_sub_v(copy->value, 1, string_len(copy) - 2);
         print_string(sub);
 
         string_destroy(copy);
@@ -58,10 +58,10 @@ int main()
         string_clear(str);
         print_string(str);
 
-        string_fit(&str);
+        string_fit(str);
         print_string(str);
 
-        string_reserve(&str, 32);
+        string_reserve(str, 32);
         print_string(str);
 
         res = string_printf(str, "Hello %u world%c", 2, '!');
