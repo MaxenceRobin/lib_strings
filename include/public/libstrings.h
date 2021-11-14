@@ -13,8 +13,9 @@
 
 /* Definitions ---------------------------------------------------------------*/
 
-typedef char *string;
-typedef const char *const_string;
+struct string {
+    char *value;
+};
 
 /* API -----------------------------------------------------------------------*/
 
@@ -23,230 +24,214 @@ typedef const char *const_string;
 /**
  * @brief Creates an empty string.
  * 
- * @return string : An empty string with a length of 0.
+ * @return Pointer to the new string on success.
+ * @return NULL on failure.
  */
-string string_empty();
+struct string *string_empty();
 
 /**
- * @brief Dupplicates the given string.
+ * @brief Dupplicates 'src'.
  * 
- * @param src : The string to dupplicate.
- * @return string : A string identical to the given one. In case of failure
- * NULL is returned.
+ * @return Pointer to the new string on success.
+ * @return NULL on failure.
  */
-string string_dup(const_string src);
+struct string *string_dup(const struct string *src);
 
 /**
- * @brief Dupplicates the given string literal.
+ * @brief Dupplicates the given string literal 'src'.
  * 
- * @param src : The string literal to dupplicate.
- * @return string : A string identical to the given one. In case of failure
- * NULL is returned.
+ * @return Pointer to the new string on success.
+ * @return NULL on failure.
  * 
- * @note This version uses strlen() to determine the string literal length.
- * It can be better for performances to use string_dup_v() coupled with sizeof()
- * instead.
+ * @note This version uses strlen() to determine the length of 'src'. It can be
+ * better for performances to use string_dup_v() coupled with sizeof() instead.
  */
-string string_dup_c(const char *src);
+struct string *string_dup_c(const char *src);
 
 /**
- * @brief Dupplicates the given char array.
+ * @brief Dupplicates the char array 'src' of length 'len'.
  * 
- * @param src : The char array to dupplicate.
- * @param len : Length of the char array to dupplicate.
- * @return string : A string identical to the given one. In case of failure
- * NULL is returned.
+ * @return Pointer to the new string on success.
+ * @return NULL on failure.
  */
-string string_dup_v(const char *src, size_t len);
+struct string *string_dup_v(const char *src, size_t len);
 
 /**
- * @brief Creates a subtring from the given char array.
+ * @brief Creates a subtring of the char array 'src'.
  * 
- * @param src : Char array from which to create the substring.
- * @param start : Position to start the substring from, first index is 0.
- * @param len : Number of characters to include in the substring.
- * @return string : A string of len characters taken from the given char array.
+ * @return Pointer to the new string on success.
+ * @return NULL on failure.
  * 
- * @warning No check is made on src for the '\0' terminating byte, start and len
- * have to be correctly used.
+ * @warning No check is made on src for the '\0' terminating byte, 'start' and
+ * 'len' have to be correctly used.
  */
-string string_sub_v(const char *src, unsigned int start, size_t len);
+struct string *string_sub_v(const char *src, unsigned int start, size_t len);
 
 /* Modification functions ------------*/
 
 /**
- * @brief Destroys a string.
- * 
- * @param str : String to destroy
+ * @brief Destroys 'str'.
  */
-void string_destroy(const_string str);
+void string_destroy(const struct string *str);
 
 /**
- * @brief Clears a string, making it empty.
+ * @brief Makes 'str' empty.
  * 
- * @param str : String to clear.
- * @return int : 0 on success, a negative errno on failure.
+ * @return 0 on success.
+ * @return -EINVAL if 'str' is invalid.
  */
-int string_clear(string str);
+int string_clear(struct string *str);
 
 /**
- * @brief Copies the content of a string into another one.
+ * @brief Copies the content of 'src' into 'dest'.
  * 
- * @param dest : Address of the string in which to copy the content into.
- * @param src : String to copy.
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ */
+int string_copy(struct string *dest, const struct string *src);
+
+/**
+ * @brief Copies the content the string literal 'src' into 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ * 
+ * @note This version uses strlen() to determine the length of 'src'. It can be
+ * better for performances to use string_copy_v() coupled with sizeof() instead.
+ */
+int string_copy_c(struct string *dest, const char *src);
+
+/**
+ * @brief Copies the content of the char array 'src' of length 'len' into
+ * 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ */
+int string_copy_v(struct string *dest, const char *src, size_t len);
+
+/**
+ * @brief Appends the content of 'src' at the end of 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ */
+int string_append(struct string *dest, const struct string *src);
+
+/**
+ * @brief Appends the content of the string literal 'src' at the end of 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ * 
+ * @note This version uses strlen() to determine the length of 'src'. It can be
+ * better for performances to use string_append_v() coupled with sizeof instead.
+ */
+int string_append_c(struct string *dest, const char *src);
+
+/**
+ * @brief Appends the content of the char array 'src' of length 'len' at the end
+ * of 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ */
+int string_append_v(struct string *dest, const char *src, size_t len);
+
+/**
+ * @brief Prepends the content of 'src' at the beginning of 'dest'.
+ * 
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
+ */
+int string_prepend(struct string *dest, const struct string *src);
+
+/**
+ * @brief Prepends the content of the string literal 'src' at the beginning of
+ * 'dest'.
+ * 
  * @return int : 0 on success, in case of failure a negative errno is returned.
- */
-int string_copy(string *dest, const_string src);
-
-/**
- * @brief Copies the content of a string literal into a string.
  * 
- * @param dest : Address of the string in which to copy the content into.
- * @param src : String literal to copy.
- * @return int : 0 on success, in case of failure a negative errno is returned.
- * 
- * @note This version uses strlen() to determine the string literal length.
- * It can be better for performances to use string_copy_v() coupled with
- * sizeof() instead.
- */
-int string_copy_c(string *dest, const char *src);
-
-/**
- * @brief Copies the content of a char array into a string.
- * 
- * @param dest : Address of the string in which to copy the content into.
- * @param src : Char array to copy.
- * @param len : Length of the char array to copy.
- * @return int : 0 on success, in case of failure a negative errno is returned.
- */
-int string_copy_v(string *dest, const char *src, size_t len);
-
-/**
- * @brief Appends the content of a string at the end of another one.
- * 
- * @param dest : Address of the string to append the content to.
- * @param src : String to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
- */
-int string_append(string *dest, const_string src);
-
-/**
- * @brief Appends the content of a string literal at the end of a string.
- * 
- * @param dest : Address of the string to append the content to.
- * @param src : String literal to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
- * 
- * @note This version uses strlen() to determine the string literal length.
- * It cas be better for performances to use string_cat_v() coupled with sizeof
+ * @note This version uses strlen() to determine the length of 'src'. It can be
+ * better for performances to use string_prepend_v() coupled with sizeof
  * instead.
  */
-int string_append_c(string *dest, const char *src);
+int string_prepend_c(struct string *dest, const char *src);
 
 /**
- * @brief Appends the content of a char array at the end of a string.
+ * @brief Prepends the content of the char array 'src' of length 'len' at the
+ * beginning of 'dest'.
  * 
- * @param dest : Address of the string to append the content to.
- * @param src : Char array to append.
- * @param len : Length of the char array to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
+ * @return 0 on success.
+ * @return -EINVAL if 'dest' or 'src' are invalid.
+ * @return -ENOMEM on failure.
  */
-int string_append_v(string *dest, const char *src, size_t len);
+int string_prepend_v(struct string *dest, const char *src, size_t len);
 
 /**
- * @brief Appends the content of a string at the end of another one.
+ * @brief Replaces the content of 'str' by a sub string of itself.
  * 
- * @param dest : Address of the string to append the content to.
- * @param src : String to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
+ * @return 0 on success.
+ * @return -EINVAL if 'str' is invalid.
+ * @return -ERANGE if 'start' + 'len' is greater than the length of 'str'.
  */
-int string_prepend(string *dest, const_string src);
+int string_cut(struct string *str, unsigned int start, size_t len);
 
 /**
- * @brief Appends the content of a string literal at the end of a string.
+ * @brief Writes the formatted input into 'str'.
  * 
- * @param dest : Address of the string to append the content to.
- * @param src : String literal to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
+ * @return The number of written bytes into the string on success.
+ * @return -EINVAL if 'str' or format are invalid.
  * 
- * @note This version uses strlen() to determine the string literal length.
- * It cas be better for performances to use string_cat_v() coupled with sizeof
- * instead.
- */
-int string_prepend_c(string *dest, const char *src);
-
-/**
- * @brief Appends the content of a char array at the end of a string.
- * 
- * @param dest : Address of the string to append the content to.
- * @param src : Char array to append.
- * @param len : Length of the char array to append.
- * @return int : 0 on success, in case of failure a negative errno is returned.
- */
-int string_prepend_v(string *dest, const char *src, size_t len);
-
-/**
- * @brief Cuts the substring to a subpart of what it contains.
- * 
- * @param str : String to cut.
- * @param start : Position to start to cut from, first index is 0.
- * @param len : Number of characters to cut.
- * @return int : 0 on success, a negative errno in case of failure.
- */
-int string_cut(string *str, unsigned int start, size_t len);
-
-/**
- * @brief Writes the formatted input into the string.
- * 
- * @param str : String in which to write the formatted input
- * @param format : Format to apply to the given arguments.
- * @param ... : Arguments to format.
- * @return int : Number of written bytes into the string on success, a negative
- * errno on failure.
- * 
- * @note If the output was truncated, the return valud is the number of
- * chraracters which would have been written to the string if enough space had
+ * @note If the output was truncated, the return value is the number of
+ * chraracters which would have been written to 'str' if enough space had
  * been available.
  */
-int string_printf(string str, const char *format, ...);
+int string_printf(struct string *str, const char *format, ...);
 
 /* Utility functions -----------------*/
 /**
- * @brief Returns the length of the string.
+ * @brief Returns the length of 'str'.
  * 
- * @param str : String for which to get the length.
- * @return ssize_t : The length of the given string, if the given string is
- * NULL -EINVAL is returned.
+ * @return The length of 'str' on success.
+ * @return -EINVAL if 'str' is invalid.
  */
-ssize_t string_len(const_string str);
+ssize_t string_len(const struct string *str);
 
 /**
- * @brief Returns the capacity of the string.
+ * @brief Returns the capacity of 'str'.
  * 
- * @param str : String for which to get the capacity.
- * @return ssize_t : The capacity of the given string, if the given string is
- * NULL -EINVAL is returned.
+ * @return The capacity of 'str' on success.
+ * @return -EINVAL if 'str' is invalid.
  */
-ssize_t string_capacity(const_string str);
+ssize_t string_capacity(const struct string *str);
 
 /**
- * @brief Reserves extra memory for the string in order to avoid future
- * reallocation. If the given size is lower than the current string size, this
- * function does nothing.
+ * @brief Reserves 'size' bytes for 'str' in order to avoid future reallocation.
  * 
- * @param str : Address of the string to reserve memory for.
- * @param size : Number of bytes to reserve for the string.
- * @return int : 0 on success, in case of failure a negative errno is returned.
+ * @return 0 on success.
+ * @return -EINVAL if 'str' is invalid.
+ * @return -ENOMEM on failure.
+ * 
+ * @note If 'size' is lower than the capacity of 'str', this function does
+ * nothing.
  */
-int string_reserve(string *str, size_t size);
+int string_reserve(struct string *str, size_t size);
 
 /**
- * @brief Reduces the capacity of the string in order to match the current
- * string length.
+ * @brief Reduces the capacity of 'str' in order to match its length.
  * 
- * @param str : Address of the string to resize.
- * @return int : 0 on success, in case of failure a negative errno is returned.
+ * @return 0 on success.
+ * @return -EINVAL if 'str' is invalid.
+ * @return -ENOMEM on failure.
  */
-int string_fit(string *str);
+int string_fit(struct string *str);
 
 #endif /* LIB_STRINGS_H */
