@@ -348,7 +348,7 @@ ssize_t string_len(const struct string *str)
         if (!str)
                 return -EINVAL;
 
-        return string_to_meta(str)->len;
+        return (ssize_t)string_to_meta(str)->len;
 }
 
 ssize_t string_capacity(const struct string *str)
@@ -356,7 +356,7 @@ ssize_t string_capacity(const struct string *str)
         if (!str)
                 return -EINVAL;
 
-        return string_to_meta(str)->capacity;
+        return (ssize_t)string_to_meta(str)->capacity;
 }
 
 int string_reserve(struct string *str, size_t size)
