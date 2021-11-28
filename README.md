@@ -12,7 +12,6 @@ The strings can still be manipulated with standard C libs.
 
 #include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 static void print_error(const char *msg, int error_code)
@@ -28,7 +27,6 @@ static void print_string(const struct string *str)
 
 int main()
 {
-        int status = EXIT_FAILURE;
         int res;
 
         struct string *str = string_empty();
@@ -68,12 +66,9 @@ int main()
         printf("res = %d\n", res);
         print_string(str);
 
-
         string_destroy(str);
 
-        status = EXIT_SUCCESS;
-out:
-        return status;
+        return 0;
 }
 ```
 

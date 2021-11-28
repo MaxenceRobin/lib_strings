@@ -51,7 +51,7 @@ static int set_string_capacity(struct string *str, size_t capacity)
 }
 
 /**
- * @brief Sets the length of 'str' to 'len' characters exclusind the null
+ * @brief Sets the length of 'str' to 'len' characters excluding the null
  * terminating byte and reallocates if needed.
  * 
  * @return 0 on success.
