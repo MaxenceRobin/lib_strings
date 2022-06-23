@@ -60,10 +60,9 @@ static int set_string_capacity(struct string *str, size_t capacity)
 static int set_string_length(struct string *str, size_t len)
 {
         struct meta *meta = string_to_meta(str);
-        int res;
 
         if (meta->capacity < len + 1) {
-                res = set_string_capacity(str, len * 2 + 1);
+                const int res = set_string_capacity(str, len * 2 + 1);
                 if (res < 0)
                         return res;
         }
@@ -82,7 +81,7 @@ static struct string *create_string(size_t len)
 {
         struct meta *meta = malloc(sizeof(*meta) + sizeof(struct string));
         if (!meta)
-                goto error_alloc_meta;
+                return NULL;
 
         struct string *str = meta_to_string(meta);
         str->value = calloc(len + 1, sizeof(*str->value));
@@ -93,10 +92,8 @@ static struct string *create_string(size_t len)
         meta->capacity = len + 1;
         return str;
 
-        /* Errors */
 error_alloc_value:
         free(meta);
-error_alloc_meta:
         return NULL;
 }
 
