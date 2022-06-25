@@ -5,7 +5,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "libstrings.h"
+#include "lib_strings.h"
 
 #include <errno.h>
 #include <stdarg.h>

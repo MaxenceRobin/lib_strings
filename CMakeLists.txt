@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.16.3)
-project(libstrings)
+project(lib_strings)
 
 # Variables --------------------------------------------------------------------
 
 set(TARGET_NAME strings)
 
 set(SOURCES
-        src/libstrings.c
+        src/lib_strings.c
 )
 
 set(PUBLIC_HEADERS

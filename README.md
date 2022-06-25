@@ -1,4 +1,4 @@
-# LIBSTRINGS
+# Lib_strings
 
 Simple C strings lib.
 
@@ -8,7 +8,7 @@ The strings can still be manipulated with standard C libs.
 ## Example
 
 ```C
-#include "libstrings.h"
+#include "lib_strings.h"
 
 #include <errno.h>
 #include <stdio.h>
