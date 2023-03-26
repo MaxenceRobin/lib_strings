@@ -6,11 +6,11 @@ project(lib_strings)
 set(TARGET_NAME strings)
 
 set(SOURCES
-        src/lib_strings.c
+        private/lib_strings.c
 )
 
 set(PUBLIC_HEADERS
-        include/public
+        public
 )
 
 set(INSTALL_DIR
